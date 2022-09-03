@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Day  {
+public class Days  {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

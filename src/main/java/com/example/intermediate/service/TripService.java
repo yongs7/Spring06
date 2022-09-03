@@ -6,7 +6,7 @@ import com.example.intermediate.controller.response.DayResponseDto;
 import com.example.intermediate.controller.response.ResponseDto;
 import com.example.intermediate.controller.response.TripListResponseDto;
 import com.example.intermediate.controller.response.TripResponseDto;
-import com.example.intermediate.domain.Day;
+import com.example.intermediate.domain.Days;
 import com.example.intermediate.domain.Member;
 import com.example.intermediate.domain.Trip;
 import com.example.intermediate.jwt.TokenProvider;
@@ -90,10 +90,10 @@ public class TripService {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
 
-    List<Day> dayList = dayRepository.findAllByTrip(trip);
+    List<Days> dayList = dayRepository.findAllByTrip(trip);
     List<DayResponseDto> dayResponseDtoList = new ArrayList<>();
 
-    for (Day day : dayList) {
+    for (Days day : dayList) {
 
       dayResponseDtoList.add(
               DayResponseDto.builder()

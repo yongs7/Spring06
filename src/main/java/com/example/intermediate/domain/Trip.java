@@ -39,7 +39,7 @@ public class Trip {
   private Long total;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Day> dayList = new ArrayList<>();
+  private List<Days> dayList = new ArrayList<>();
 
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
