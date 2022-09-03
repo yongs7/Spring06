@@ -1,11 +1,14 @@
 package com.example.intermediate.service;
 
 
+import com.example.intermediate.controller.response.CostResponseDto;
 import com.example.intermediate.controller.response.DayResponseDto;
 import com.example.intermediate.controller.response.ResponseDto;
+import com.example.intermediate.domain.Cost;
 import com.example.intermediate.domain.Days;
 import com.example.intermediate.domain.Trip;
 import com.example.intermediate.jwt.TokenProvider;
+import com.example.intermediate.repository.CostRepository;
 import com.example.intermediate.repository.DayRepository;
 import com.example.intermediate.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class DayService {
 
+  private final CostRepository costRepository;
   private final DayRepository dayRepository;
   private final TripRepository tripRepository;
 
@@ -43,10 +47,22 @@ public class DayService {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 day id 입니다.");
     }
 
+    List<Cost> temp = costRepository.findAllByDays(day);
+    List<CostResponseDto> costList = new ArrayList<>();
+
+    for(Cost cost : temp){
+      costList.add(CostResponseDto.builder()
+              .id(cost.getId())
+              .content(cost.getContent())
+              .pay(cost.getPay())
+              .build()
+      );
+    }
     return ResponseDto.success(
             DayResponseDto.builder()
                     .id(day.getId())
                     .subTotal(day.getSubTotal())
+                    .costList(costList)
                     .build()
     );
   }

@@ -15,7 +15,6 @@ public class DayController {
 
   private final DayService dayService;
 
-
   @RequestMapping(value = "/day/{id}", method = RequestMethod.GET)
   public ResponseDto<?> getDay(@PathVariable Long id) {
     return dayService.getDay(id);
