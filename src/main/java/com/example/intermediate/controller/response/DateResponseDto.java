@@ -11,8 +11,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DayResponseDto {
+public class DateResponseDto {
   private Long id;
-  private Long subTotal;
+  private int subTotal;
   private List<CostResponseDto> costList;
 }

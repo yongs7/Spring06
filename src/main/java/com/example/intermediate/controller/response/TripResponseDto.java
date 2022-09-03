@@ -19,6 +19,6 @@ public class TripResponseDto {
   private String tripStart;
   private String tripEnd;
   private int days;
-  private Long total;
-  private List<DayResponseDto> dayList = new ArrayList<>();
+  private int total;
+  private List<DateResponseDto> dateList = new ArrayList<>();
 }

@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Days  {
+public class Date  {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,9 @@ public class Days  {
   private Trip trip;
 
   @Column(nullable = false)
-  private Long subTotal;
+  private int subTotal;
 
+  public void update(int pay){
+    this.subTotal += pay;
+  }
 }

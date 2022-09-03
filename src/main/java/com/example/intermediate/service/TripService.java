@@ -2,15 +2,14 @@ package com.example.intermediate.service;
 
 
 import com.example.intermediate.controller.request.TripRequestDto;
-import com.example.intermediate.controller.response.DayResponseDto;
-import com.example.intermediate.controller.response.ResponseDto;
-import com.example.intermediate.controller.response.TripListResponseDto;
-import com.example.intermediate.controller.response.TripResponseDto;
-import com.example.intermediate.domain.Days;
+import com.example.intermediate.controller.response.*;
+import com.example.intermediate.domain.Cost;
+import com.example.intermediate.domain.Date;
 import com.example.intermediate.domain.Member;
 import com.example.intermediate.domain.Trip;
 import com.example.intermediate.jwt.TokenProvider;
-import com.example.intermediate.repository.DayRepository;
+import com.example.intermediate.repository.CostRepository;
+import com.example.intermediate.repository.DateRepository;
 import com.example.intermediate.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,8 +26,9 @@ public class TripService {
 
   private final TokenProvider tokenProvider;
   private final TripRepository tripRepository;
-  private final DayRepository dayRepository;
-  private final DayService dayService;
+  private final DateRepository dateRepository;
+  private final DateService dateService;
+  private final CostRepository costRepository;
   @Transactional
   public ResponseDto<?> createTrip(TripRequestDto requestDto, HttpServletRequest request) {
     if (null == request.getHeader("Refresh-Token")) {
@@ -52,11 +52,13 @@ public class TripService {
         .days(requestDto.getDays())
         .tripStart(requestDto.getTripStart())
         .tripEnd(requestDto.getTripEnd())
-        .total(0L)
+        .total(0)
         .member(member)
         .build();
+
     tripRepository.save(trip);
-    dayService.createDay(trip.getId(), trip.getDays());
+
+    dateService.createDate(trip.getId(), trip.getDays());
     return ResponseDto.success(
         TripResponseDto.builder()
             .id(trip.getId())
@@ -90,15 +92,27 @@ public class TripService {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
 
-    List<Days> dayList = dayRepository.findAllByTrip(trip);
-    List<DayResponseDto> dayResponseDtoList = new ArrayList<>();
+    List<Date> dateList = dateRepository.findAllByTrip(trip);
+    List<DateResponseDto> dateResponseDtoList = new ArrayList<>();
 
-    for (Days day : dayList) {
+    for (Date date : dateList) {
 
-      dayResponseDtoList.add(
-              DayResponseDto.builder()
-                      .id(day.getId())
-                      .subTotal(day.getSubTotal())
+      List<Cost> temp = costRepository.findAllByDate(date);
+      List<CostResponseDto> costList = new ArrayList<>();
+
+      for(Cost cost : temp){
+        costList.add(CostResponseDto.builder()
+                .id(cost.getId())
+                .content(cost.getContent())
+                .pay(cost.getPay())
+                .build()
+        );
+      }
+      dateResponseDtoList.add(
+              DateResponseDto.builder()
+                      .id(date.getId())
+                      .subTotal(date.getSubTotal())
+                      .costList(costList)
                       .build()
       );
     }
@@ -112,7 +126,7 @@ public class TripService {
                 .tripEnd(trip.getTripEnd())
                 .days(trip.getDays())
                 .total(trip.getTotal())
-                .dayList(dayResponseDtoList)
+                .dateList(dateResponseDtoList)
                 .build()
     );
   }
@@ -172,8 +186,10 @@ public class TripService {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
     }
 
-    dayRepository.deleteAllByTrip(trip);
+    dateService.deleteByDate(trip.getId());
+    dateRepository.deleteAllByTrip(trip);
     tripRepository.delete(trip);
+
     return ResponseDto.success("delete success");
   }
 
@@ -189,5 +205,12 @@ public class TripService {
       return null;
     }
     return tokenProvider.getMemberFromAuthentication();
+  }
+
+  public void update(int pay, Long tripId) {
+    Trip trip = isPresentTrip(tripId);
+
+    trip.update(pay);
+
   }
 }

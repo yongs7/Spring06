@@ -21,16 +21,16 @@ public class TripController {
     return tripService.createTrip(requestDto, request);
   }
 
-  //여행 상세 페이지 조회하기
-  @RequestMapping(value = "/trip/{id}", method = RequestMethod.GET)
-  public ResponseDto<?> getTrip(@PathVariable Long id, HttpServletRequest request) {
-    return tripService.getTrip(id, request);
-  }
-
   //여행 목록 조회하기
   @RequestMapping(value = "/trip", method = RequestMethod.GET)
   public ResponseDto<?> getAllTrips(HttpServletRequest request) {
     return tripService.getAllTrip(request);
+  }
+
+  //여행 상세 페이지 조회하기
+  @RequestMapping(value = "/trip/{id}", method = RequestMethod.GET)
+  public ResponseDto<?> getTrip(@PathVariable Long id, HttpServletRequest request) {
+    return tripService.getTrip(id, request);
   }
 
   //여행 삭제하기

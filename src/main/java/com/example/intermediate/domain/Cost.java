@@ -21,9 +21,9 @@ public class Cost {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "days_id", nullable = false)
+    @JoinColumn(name = "date_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Days days;
+    private Date date;
 
     @Column
     private String content;

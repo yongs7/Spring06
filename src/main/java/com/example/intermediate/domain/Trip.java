@@ -36,14 +36,17 @@ public class Trip {
   private int days;
 
   @Column(nullable = false)
-  private Long total;
+  private int total;
 
   @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Days> dayList = new ArrayList<>();
+  private List<Date> dateList = new ArrayList<>();
 
   @JoinColumn(name = "member_id", nullable = false)
   @ManyToOne(fetch = FetchType.LAZY)
   private Member member;
 
+  public void update(int pay){
+    this.total += pay;
+  }
 
 }
