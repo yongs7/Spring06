@@ -14,13 +14,13 @@ public class CostController {
 
     private final CostService costService;
 
-    @RequestMapping(value = "/cost/{id}", method = RequestMethod.POST)
-    public ResponseDto<?> createCost(@PathVariable Long id, @RequestBody CostRequestDto requestDto,
+    @RequestMapping(value = "/costs", method = RequestMethod.POST)
+    public ResponseDto<?> createCost(@RequestBody CostRequestDto requestDto,
                                      HttpServletRequest request) {
-        return costService.createCost(id, requestDto, request);
+        return costService.createCost(requestDto, request);
     }
 
-    @RequestMapping(value = "/cost/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/costs/{id}", method = RequestMethod.DELETE)
     public ResponseDto<?> deleteCost(@PathVariable Long id,
                                      HttpServletRequest request) {
         return costService.deleteCost(id, request);
