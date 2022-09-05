@@ -76,9 +76,23 @@ public class DateService {
     List<DateResponseDto> dtoList = new ArrayList<>();
 
     for (Date date:dateList) {
+
+      List<Cost> temp = costRepository.findAllByDate(date);
+      List<CostResponseDto> costList = new ArrayList<>();
+
+      for(Cost cost : temp){
+        costList.add(CostResponseDto.builder()
+                .id(cost.getId())
+                .content(cost.getContent())
+                .pay(cost.getPay())
+                .build()
+        );
+      }
+
       dtoList.add(
               DateResponseDto.builder()
                       .id(date.getId())
+                      .costList(costList)
                       .subTotal(date.getSubTotal())
                       .build());
     }
