@@ -20,7 +20,7 @@ public class DateController {
     return dateService.getDate(id);
   }
 
-  @RequestMapping(value = "/dates/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/date/{id}", method = RequestMethod.GET)
   public ResponseDto<?> getAllDate(@PathVariable Long id) {
     return dateService.getAllDate(id);
   }
