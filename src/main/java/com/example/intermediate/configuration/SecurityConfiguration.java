@@ -83,7 +83,7 @@ public class SecurityConfiguration {
   public CorsConfigurationSource corsConfigurationSource() {
 
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(List.of("http://3.39.254.156:8080"));
+    configuration.setAllowedOrigins(List.of("http://3.39.254.156:3000"));
     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE"));
     configuration.setAllowCredentials(true);
     configuration.setAllowedHeaders(List.of("*"));
