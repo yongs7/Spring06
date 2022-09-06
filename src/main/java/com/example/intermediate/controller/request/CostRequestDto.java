@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CostRequestDto {
+    private Long dateId;
     private String content;
     private int pay;
 

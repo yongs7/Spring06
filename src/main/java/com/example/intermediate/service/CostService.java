@@ -27,7 +27,7 @@ public class CostService {
     private final TripService tripService;
 
     @Transactional
-    public ResponseDto<?> createCost(Long dateId, CostRequestDto requestDto, HttpServletRequest request) {
+    public ResponseDto<?> createCost(CostRequestDto requestDto, HttpServletRequest request) {
         if (null == request.getHeader("Refresh-Token")) {
             return ResponseDto.fail("MEMBER_NOT_FOUND",
                     "로그인이 필요합니다.");
@@ -43,7 +43,7 @@ public class CostService {
             return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
         }
 
-        Date date = dateService.isPresentDate(dateId);
+        Date date = dateService.isPresentDate(requestDto.getDateId());
         if (null == date) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 date id 입니다.");
         }
@@ -58,7 +58,7 @@ public class CostService {
 
         int pay = cost.getPay();
         dateService.update(pay,date.getId());
-       tripService.update(pay, date.getTrip().getId());
+        tripService.update(pay, date.getTrip().getId());
 
         return ResponseDto.success(CostResponseDto.builder()
                 .id(cost.getId())
