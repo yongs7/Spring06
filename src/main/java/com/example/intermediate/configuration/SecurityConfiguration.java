@@ -19,6 +19,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +54,7 @@ public class SecurityConfiguration {
   @Bean
   @Order(SecurityProperties.BASIC_AUTH_ORDER)
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.cors();
+    http.cors().configurationSource(corsConfigurationSource());
 
     http.csrf().disable()
 
@@ -64,6 +70,7 @@ public class SecurityConfiguration {
         .authorizeRequests()
         .antMatchers("/member/signup").permitAll()
         .antMatchers("/member/login").permitAll()
+            .antMatchers("/trip/**/excel").permitAll()
         .anyRequest().authenticated()
 
         .and()
@@ -71,4 +78,20 @@ public class SecurityConfiguration {
 
     return http.build();
   }
+
+  @Bean
+  public CorsConfigurationSource corsConfigurationSource() {
+
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.setAllowedOrigins(List.of("http://3.39.254.156:8080"));
+    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "DELETE"));
+    configuration.setAllowCredentials(true);
+    configuration.setAllowedHeaders(List.of("*"));
+
+    org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+
+    return source;
+  }
+
 }
