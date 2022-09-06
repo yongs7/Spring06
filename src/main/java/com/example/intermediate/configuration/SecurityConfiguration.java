@@ -58,6 +58,8 @@ public class SecurityConfiguration {
 
     http.csrf().disable()
 
+        .headers().frameOptions().disable()
+        .and()
         .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPointException)
         .accessDeniedHandler(accessDeniedHandlerException)
@@ -70,7 +72,6 @@ public class SecurityConfiguration {
         .authorizeRequests()
         .antMatchers("/member/signup").permitAll()
         .antMatchers("/member/login").permitAll()
-            .antMatchers("/trip/**/excel").permitAll()
         .anyRequest().authenticated()
 
         .and()
