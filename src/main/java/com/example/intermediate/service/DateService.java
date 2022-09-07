@@ -30,13 +30,15 @@ public class DateService {
   public void createDate(Long tripId, int days) {
 
     Trip trip = isPresentTrip(tripId);
+    List<Date> dateList = new ArrayList<>();
     for (int i = 0; i < days; i++) {
       Date date = Date.builder()
         .trip(trip)
         .subTotal(0)
         .build();
-      dateRepository.save(date);
+      dateList.add(date);
     }
+    dateRepository.saveAll(dateList);
   }
 
   @Transactional(readOnly = true)
