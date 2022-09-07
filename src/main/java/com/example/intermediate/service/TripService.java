@@ -31,7 +31,7 @@ public class TripService {
   private final CostRepository costRepository;
   @Transactional
   public ResponseDto<?> createTrip(TripRequestDto requestDto, HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
+    if (null == request.getHeader("RefreshToken")) {
       return ResponseDto.fail("MEMBER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
@@ -73,7 +73,7 @@ public class TripService {
   }
 
   @Transactional(readOnly = true)
-  public ResponseDto<?> getTrip(Long id, HttpServletRequest request) {    if (null == request.getHeader("Refresh-Token")) {
+  public ResponseDto<?> getTrip(Long id, HttpServletRequest request) {    if (null == request.getHeader("RefreshToken")) {
     return ResponseDto.fail("MEMBER_NOT_FOUND",
             "로그인이 필요합니다.");
   }
@@ -133,7 +133,7 @@ public class TripService {
 
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllTrip(HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
+    if (null == request.getHeader("RefreshToken")) {
       return ResponseDto.fail("MEMBER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
@@ -167,7 +167,7 @@ public class TripService {
 
   @Transactional
   public ResponseDto<?> deleteTrip(Long id, HttpServletRequest request) {
-    if (null == request.getHeader("Refresh-Token")) {
+    if (null == request.getHeader("RefreshToken")) {
       return ResponseDto.fail("MEMBER_NOT_FOUND",
               "로그인이 필요합니다.");
     }
@@ -201,7 +201,7 @@ public class TripService {
 
   @Transactional
   public Member validateMember(HttpServletRequest request) {
-    if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+    if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
       return null;
     }
     return tokenProvider.getMemberFromAuthentication();
