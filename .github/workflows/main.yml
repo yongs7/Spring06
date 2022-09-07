@@ -35,8 +35,7 @@ jobs:
         java-version: '11'
 
         ## create application-aws.properties
-    - name: make application-prod.properties
-      if: contains(github.ref, 'main') # branch가 main 일 때
+    - name: make application-aws.properties
       run: |
         cd ./src/main/resources
         touch ./application-aws.properties
