@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
+//Trip 상세 조회용 DTO
 @Builder
 @Getter
 @NoArgsConstructor

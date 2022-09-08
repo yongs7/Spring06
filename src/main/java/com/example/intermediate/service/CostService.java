@@ -58,7 +58,7 @@ public class CostService {
 
         int pay = cost.getPay();
         dateService.update(pay,date.getId());
-        tripService.update(pay, date.getTrip().getId());
+        tripService.update(pay, date.getTrip());
 
         return ResponseDto.success(CostResponseDto.builder()
                 .id(cost.getId())
@@ -100,7 +100,7 @@ public class CostService {
 
         int pay = cost.getPay()*(-1);
         dateService.update(pay,date.getId());
-        tripService.update(pay, date.getTrip().getId());
+        tripService.update(pay, date.getTrip());
 
         costRepository.delete(cost);
         return ResponseDto.success("delete success");

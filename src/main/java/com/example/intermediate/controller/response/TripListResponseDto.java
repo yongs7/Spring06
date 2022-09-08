@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+//Trip 목록 조회용 DTO
 @Builder
 @Getter
 @NoArgsConstructor

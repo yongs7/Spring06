@@ -15,11 +15,14 @@ public class DateController {
 
   private final DateService dateService;
 
+  //입력 받은 id date 조회
   @RequestMapping(value = "/date/{id}", method = RequestMethod.GET)
   public ResponseDto<?> getDate(@PathVariable Long id) {
     return dateService.getDate(id);
   }
 
+
+  //입력 받은 id의 Trip 전체 date 조회
   @RequestMapping(value = "/dates/{id}", method = RequestMethod.GET)
   public ResponseDto<?> getAllDate(@PathVariable Long id) {
     return dateService.getAllDate(id);

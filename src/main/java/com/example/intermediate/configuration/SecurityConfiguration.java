@@ -66,6 +66,7 @@ public class SecurityConfiguration {
         .authorizeRequests()
         .antMatchers("/member/signup").permitAll()
         .antMatchers("/member/login").permitAll()
+        .antMatchers("/excel/**").permitAll()
         .anyRequest().authenticated()
 
         .and()

@@ -6,24 +6,24 @@ import com.example.intermediate.domain.Cost;
 import com.example.intermediate.domain.Date;
 import com.example.intermediate.domain.Member;
 import com.example.intermediate.domain.Trip;
+import com.example.intermediate.excel.ExcelWriter;
 import com.example.intermediate.jwt.TokenProvider;
 import com.example.intermediate.repository.CostRepository;
 import com.example.intermediate.repository.DateRepository;
 import com.example.intermediate.repository.TripRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import static com.example.intermediate.excel.CostColumnInfo.PAY;
 
 @Service
 @RequiredArgsConstructor
@@ -62,30 +62,31 @@ public class ExcelService {
     Cell cell = null;
     int rowNum = 0;
 
+    CellStyle body = ExcelWriter.createCellStyle(wb, new Color(255,255,255));
+
     List<Date> dateList = dateRepository.findAllByTrip(trip);
 
     for (int i = 0; i < dateList.size(); i++) {
 
       row = sheet.createRow(rowNum++);
       cell = row.createCell(0);
+      cell.setCellStyle(ExcelWriter.createCellStyle(wb,new Color(225,235,245)));
       cell.setCellValue("day "+(i+1));
-      cell = row.createCell(1);
-      cell.setCellValue("지출 내역");
-      cell = row.createCell(2);
-      cell.setCellValue("금액");
+      ExcelWriter.renderHeader(wb,row);
+
 
       List<Cost> costList = costRepository.findAllByDate(dateList.get(i));
-      for (int j=0; j<costList.size(); j++) {
+      for (Cost cost : costList) {
         row = sheet.createRow(rowNum++);
-        cell = row.createCell(1);
-        cell.setCellValue(costList.get(j).getContent());
-        cell = row.createCell(2);
-        cell.setCellValue(costList.get(j).getPay());
+        ExcelWriter.renderBody(row, CostResponseDto.builder()
+                .content(cost.getContent())
+                .pay(cost.getPay())
+                .build(), body);
       }
       row = sheet.createRow(rowNum++);
       cell = row.createCell(0);
       cell.setCellValue("day"+(i+1)+" 지출");
-      cell = row.createCell(2);
+      cell = row.createCell(PAY.getColumn());
       cell.setCellValue(dateList.get(i).getSubTotal());
       row = sheet.createRow(rowNum++);
     }
@@ -93,7 +94,7 @@ public class ExcelService {
     row = sheet.createRow(rowNum++);
     cell = row.createCell(0);
     cell.setCellValue("총 지출");
-    cell = row.createCell(2);
+    cell = row.createCell(PAY.getColumn());
     cell.setCellValue(trip.getTotal());
     // 컨텐츠 타입과 파일명 지정
     response.setContentType(request.getContentType());
