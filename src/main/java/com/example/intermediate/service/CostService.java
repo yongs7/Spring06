@@ -58,7 +58,7 @@ public class CostService {
 
         int pay = cost.getPay();    //지출내역 합산
         dateService.update(pay,date.getId());
-        tripService.update(pay, date.getTrip().getId());
+        tripService.update(pay, date.getTrip());
 
         return ResponseDto.success(CostResponseDto.builder()    //responseDto 타입으로 응답 생성
                 .id(cost.getId())
@@ -100,7 +100,7 @@ public class CostService {
 
         int pay = cost.getPay()*(-1);   //지출내역 차감
         dateService.update(pay,date.getId());
-        tripService.update(pay, date.getTrip().getId());
+        tripService.update(pay, date.getTrip());
 
         costRepository.delete(cost);    //지출내역 삭제
         return ResponseDto.success("delete success");
