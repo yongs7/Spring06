@@ -19,6 +19,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.reactive.CorsConfigurationSource;
+import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -35,12 +38,12 @@ public class SecurityConfiguration {
   private final AccessDeniedHandlerException accessDeniedHandlerException;
 
   @Bean
-  public PasswordEncoder passwordEncoder() {
+  public PasswordEncoder passwordEncoder() {  //비밀번호 암호화
     return new BCryptPasswordEncoder();
   }
 
   @Bean
-  public WebSecurityCustomizer ignoringCustomizer(){
+  public WebSecurityCustomizer ignoringCustomizer(){  //h2-console 허용
     return (web) -> web.ignoring()
             .antMatchers("/h2-console/**");
   }
@@ -57,11 +60,11 @@ public class SecurityConfiguration {
         .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPointException)
         .accessDeniedHandler(accessDeniedHandlerException)
-
+        //세션 사용x
         .and()
         .sessionManagement()
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
+        //인증없이 회원가입, 로그인 허용
         .and()
         .authorizeRequests()
         .antMatchers("/member/signup").permitAll()

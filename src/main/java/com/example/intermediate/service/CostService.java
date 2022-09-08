@@ -48,19 +48,19 @@ public class CostService {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 date id 입니다.");
         }
 
-        Cost cost = Cost.builder()
+        Cost cost = Cost.builder()  //지출내역 생성
                 .member(member)
                 .date(date)
                 .content(requestDto.getContent())
                 .pay(requestDto.getPay())
                 .build();
-        costRepository.save(cost);
+        costRepository.save(cost);  //저장
 
-        int pay = cost.getPay();
+        int pay = cost.getPay();    //지출내역 합산
         dateService.update(pay,date.getId());
         tripService.update(pay, date.getTrip());
 
-        return ResponseDto.success(CostResponseDto.builder()
+        return ResponseDto.success(CostResponseDto.builder()    //responseDto 타입으로 응답 생성
                 .id(cost.getId())
                 .content(cost.getContent())
                 .pay(cost.getPay())
@@ -98,22 +98,22 @@ public class CostService {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 date id 입니다.");
         }
 
-        int pay = cost.getPay()*(-1);
+        int pay = cost.getPay()*(-1);   //지출내역 차감
         dateService.update(pay,date.getId());
         tripService.update(pay, date.getTrip());
 
-        costRepository.delete(cost);
+        costRepository.delete(cost);    //지출내역 삭제
         return ResponseDto.success("delete success");
     }
 
     @Transactional(readOnly = true)
-    public Cost isPresentCost(Long id) {
+    public Cost isPresentCost(Long id) {    //지출내역 불러오기
         Optional<Cost> optionalCost = costRepository.findById(id);
         return optionalCost.orElse(null);
     }
 
     @Transactional
-    public Member validateMember(HttpServletRequest request) {
+    public Member validateMember(HttpServletRequest request) {  //지출내역 작성자 인증
         if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
             return null;
         }

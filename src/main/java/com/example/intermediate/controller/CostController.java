@@ -14,13 +14,13 @@ public class CostController {
 
     private final CostService costService;
 
-    @RequestMapping(value = "/costs", method = RequestMethod.POST)
+    @RequestMapping(value = "/costs", method = RequestMethod.POST)  //지출생성 api, x일 바디로 지정
     public ResponseDto<?> createCost(@RequestBody CostRequestDto requestDto,
                                      HttpServletRequest request) {
         return costService.createCost(requestDto, request);
     }
 
-    @RequestMapping(value = "/costs/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/costs/{id}", method = RequestMethod.DELETE)   //지출삭제 api
     public ResponseDto<?> deleteCost(@PathVariable Long id,
                                      HttpServletRequest request) {
         return costService.deleteCost(id, request);

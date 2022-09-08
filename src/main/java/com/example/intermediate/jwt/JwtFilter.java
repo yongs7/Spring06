@@ -52,12 +52,12 @@ public class JwtFilter extends OncePerRequestFilter {
     if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
       Claims claims;
       try {
-        claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody();
+        claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(jwt).getBody(); //서명 검증, 예외처리
       } catch (ExpiredJwtException e) {
         claims = e.getClaims();
       }
 
-      if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) {
+      if (claims.getExpiration().toInstant().toEpochMilli() < Instant.now().toEpochMilli()) { //현재시간 타임스탬프 유효성 검증
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().println(
             new ObjectMapper().writeValueAsString(
@@ -67,13 +67,13 @@ public class JwtFilter extends OncePerRequestFilter {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       }
 
-      String subject = claims.getSubject();
+      String subject = claims.getSubject(); //클레임에서 권한정보 꺼내오기
       Collection<? extends GrantedAuthority> authorities =
           Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
               .map(SimpleGrantedAuthority::new)
               .collect(Collectors.toList());
 
-      UserDetails principal = userDetailsService.loadUserByUsername(subject);
+      UserDetails principal = userDetailsService.loadUserByUsername(subject); //인증 객체
 
       Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt, authorities);
       SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -81,7 +81,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     filterChain.doFilter(request, response);
   }
-  private String resolveToken(HttpServletRequest request) {
+  private String resolveToken(HttpServletRequest request) { //헤더에서 토큰정보 꺼내오기
     String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
     if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
       return bearerToken.substring(7);

@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CostResponseDto {
-    private Long id;
-    private String content;
-    private int pay;
+    private Long id;    //x일
+    private String content; //지출내용
+    private int pay;    //지출금액
 
 }
