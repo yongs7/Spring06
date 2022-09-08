@@ -19,19 +19,19 @@ public class MemberController {
 
   private final MemberService memberService;
 
-  @RequestMapping(value = "/member/signup", method = RequestMethod.POST)
+  @RequestMapping(value = "/member/signup", method = RequestMethod.POST)  //회원가입 api
   public ResponseDto<?> signup(@RequestBody @Valid MemberRequestDto requestDto) {
     return memberService.createMember(requestDto);
   }
 
-  @RequestMapping(value = "/member/login", method = RequestMethod.POST)
+  @RequestMapping(value = "/member/login", method = RequestMethod.POST) //로그인 api
   public ResponseDto<?> login(@RequestBody @Valid LoginRequestDto requestDto,
       HttpServletResponse response
   ) {
     return memberService.login(requestDto, response);
   }
 
-  @RequestMapping(value = "/member/logout", method = RequestMethod.POST)
+  @RequestMapping(value = "/member/logout", method = RequestMethod.POST)  //로그아웃 api
   public ResponseDto<?> logout(HttpServletRequest request) {
     return memberService.logout(request);
   }

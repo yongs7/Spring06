@@ -26,17 +26,17 @@ public class MemberService {
 
   @Transactional
   public ResponseDto<?> createMember(MemberRequestDto requestDto) {
-    if (null != isPresentMember(requestDto.getUserId())) {
+    if (null != isPresentMember(requestDto.getUserId())) {  //아이디 중복여부 확인
       return ResponseDto.fail("DUPLICATED_USER_ID",
-          "중복된 닉네임 입니다.");
+          "중복된 아이디 입니다.");
     }
 
-    if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {
+    if (!requestDto.getPassword().equals(requestDto.getPasswordConfirm())) {  //비밀번호 일치여부 확인
       return ResponseDto.fail("PASSWORDS_NOT_MATCHED",
           "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
     }
 
-    Member member = Member.builder()
+    Member member = Member.builder()  //유저 생성
             .userId(requestDto.getUserId())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
                     .build();
@@ -46,24 +46,24 @@ public class MemberService {
   }
 
   @Transactional
-  public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
+  public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) { //로그인, 기존 등록된 유저인지 확인
     Member member = isPresentMember(requestDto.getUserId());
     if (null == member) {
       return ResponseDto.fail("MEMBER_NOT_FOUND",
           "사용자를 찾을 수 없습니다.");
     }
 
-    if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
+    if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {  //비밀번호 확인
       return ResponseDto.fail("INVALID_MEMBER", "사용자를 찾을 수 없습니다.");
     }
 
-    TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+    TokenDto tokenDto = tokenProvider.generateTokenDto(member); //정상 로그인, 토큰 생성
     tokenToHeaders(tokenDto, response);
 
     return ResponseDto.success(member.getUserId()+" 로그인에 성공했습니다");
   }
 
-  public ResponseDto<?> logout(HttpServletRequest request) {
+  public ResponseDto<?> logout(HttpServletRequest request) {  //로그아웃, refreshToken 유효성 검사
     if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
       return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
     }
@@ -73,7 +73,7 @@ public class MemberService {
           "사용자를 찾을 수 없습니다.");
     }
 
-    return tokenProvider.deleteRefreshToken(member);
+    return tokenProvider.deleteRefreshToken(member);  //정상 로그아웃, refreshToken 삭제
   }
 
   @Transactional(readOnly = true)
@@ -82,7 +82,7 @@ public class MemberService {
     return optionalMember.orElse(null);
   }
 
-  public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+  public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) { //accessToken, refreshToken, 유효기간 헤더 추가
     response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
     response.addHeader("RefreshToken", tokenDto.getRefreshToken());
     response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());

@@ -58,7 +58,7 @@ public class TokenProvider {
   public TokenDto generateTokenDto(Member member) {
     long now = (new Date().getTime());
 
-    Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+    Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME); //accessToken 생성
     String accessToken = Jwts.builder()
         .setSubject(member.getUserId())
         .claim(AUTHORITIES_KEY, Authority.ROLE_MEMBER.toString())
@@ -66,7 +66,7 @@ public class TokenProvider {
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();
 
-    String refreshToken = Jwts.builder()
+    String refreshToken = Jwts.builder()  //refreshToken 생성
         .setExpiration(new Date(now + REFRESH_TOKEN_EXPRIRE_TIME))
         .signWith(key, SignatureAlgorithm.HS256)
         .compact();
@@ -79,7 +79,7 @@ public class TokenProvider {
 
     refreshTokenRepository.save(refreshTokenObject);
 
-    return TokenDto.builder()
+    return TokenDto.builder() //tokenDto 타입으로 토큰 생성
         .grantType(BEARER_PREFIX)
         .accessToken(accessToken)
         .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
@@ -88,7 +88,7 @@ public class TokenProvider {
 
   }
 
-  public Member getMemberFromAuthentication() {
+  public Member getMemberFromAuthentication() { //유저 인증
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || AnonymousAuthenticationToken.class.
         isAssignableFrom(authentication.getClass())) {
@@ -97,7 +97,7 @@ public class TokenProvider {
     return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
   }
 
-  public boolean validateToken(String token) {
+  public boolean validateToken(String token) {  //토큰 유효성 검사
     try {
       Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
       return true;
