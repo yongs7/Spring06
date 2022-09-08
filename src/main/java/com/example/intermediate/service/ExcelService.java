@@ -4,10 +4,8 @@ package com.example.intermediate.service;
 import com.example.intermediate.controller.response.*;
 import com.example.intermediate.domain.Cost;
 import com.example.intermediate.domain.Date;
-import com.example.intermediate.domain.Member;
 import com.example.intermediate.domain.Trip;
 import com.example.intermediate.excel.ExcelWriter;
-import com.example.intermediate.jwt.TokenProvider;
 import com.example.intermediate.repository.CostRepository;
 import com.example.intermediate.repository.DateRepository;
 import com.example.intermediate.repository.TripRepository;
@@ -29,7 +27,6 @@ import static com.example.intermediate.excel.CostColumnInfo.PAY;
 @RequiredArgsConstructor
 public class ExcelService {
 
-  private final TokenProvider tokenProvider;
   private final TripRepository tripRepository;
   private final DateRepository dateRepository;
   private final CostRepository costRepository;
@@ -96,9 +93,9 @@ public class ExcelService {
     cell.setCellValue("총 지출");
     cell = row.createCell(PAY.getColumn());
     cell.setCellValue(trip.getTotal());
+
     // 컨텐츠 타입과 파일명 지정
-    response.setContentType(request.getContentType());
-//        response.setHeader("Content-Disposition", "attachment;filename=example.xls");
+    response.setContentType("ms-vnd/excel");
     response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
 
     // Excel File Output
@@ -119,11 +116,4 @@ public class ExcelService {
     return optionalTrip.orElse(null);
   }
 
-  @Transactional
-  public Member validateMember(HttpServletRequest request) {
-    if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-      return null;
-    }
-    return tokenProvider.getMemberFromAuthentication();
-  }
 }

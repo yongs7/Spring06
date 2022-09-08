@@ -33,19 +33,12 @@ public class TripService {
   //trip 생성 메서드
   @Transactional
   public ResponseDto<?> createTrip(TripRequestDto requestDto, HttpServletRequest request) {
-    if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
 
-    if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
-
-    Member member = validateMember(request);
+    //토큰 유효성 검사, 유효하면 해당 member 가져옴 아니면 null
+    Member member = isValidateAccess(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      return ResponseDto.fail("MEMBER_NOT_FOUND",
+              "로그인이 필요합니다.");
     }
 
     //dto에 담긴 정보로 Trip 생성
@@ -140,20 +133,11 @@ public class TripService {
   //사용자가 작성한 모든 trip의 목록 반환
   @Transactional(readOnly = true)
   public ResponseDto<?> getAllTrip(HttpServletRequest request) {
-    if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
 
-    if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
-
-    //유저 확인. 해당 정보의 member가 있으면 해당 member 반환, 없으면 null
-    Member member = validateMember(request);
+    Member member = isValidateAccess(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      return ResponseDto.fail("MEMBER_NOT_FOUND",
+              "로그인이 필요합니다.");
     }
 
     //목록에 표시할 간략한 정보만 담긴 Trip dto 를 생성하여 반환
@@ -174,24 +158,16 @@ public class TripService {
     return ResponseDto.success(dtoList);
   }
 
-
   //trip 삭제 메서드. trip에 포함된 하위 요소들도 모두 같이 삭제된다.
   @Transactional
   public ResponseDto<?> deleteTrip(Long id, HttpServletRequest request) {
-    if (null == request.getHeader("RefreshToken")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
 
-    if (null == request.getHeader("Authorization")) {
-      return ResponseDto.fail("MEMBER_NOT_FOUND",
-              "로그인이 필요합니다.");
-    }
-
-    Member member = validateMember(request);
+    Member member = isValidateAccess(request);
     if (null == member) {
-      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
+      return ResponseDto.fail("MEMBER_NOT_FOUND",
+              "로그인이 필요합니다.");
     }
+
     Trip trip = isPresentTrip(id);
     if (null == trip) {
       return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
@@ -214,30 +190,18 @@ public class TripService {
     return optionalTrip.orElse(null);
   }
 
-  //member 존재 여부 확인 메서드. 해당 멤버가 존재하면 member 반환 아니면 null
-  @Transactional
-  public Member validateMember(HttpServletRequest request) {
-
-    //Refresh Token이 올바르지 않으면 null
-    if (!tokenProvider.validateToken(request.getHeader("RefreshToken"))) {
-      return null;
-    }
-    // 유효성 검사 후 해당하는 member 반환
-    return tokenProvider.getMemberFromAuthentication();
-  }
-
   //토큰 유효성 검사하는 메서드. 정상적인 접근(토큰이 들어있으며 유효함)이면 해당 member 반환, 아니면 null
   public Member isValidateAccess(HttpServletRequest request){
 
-    if (null == request.getHeader("RefreshToken")) {
+    //헤더에 Authorization, RefrehToken 값이 없거나 유효하지 않으면 null
+    if (null == request.getHeader("RefreshToken") ||
+            !tokenProvider.validateToken(request.getHeader("RefreshToken")) ||
+            null == request.getHeader("Authorization")) {
       return null;
     }
 
-    if (null == request.getHeader("Authorization")) {
-      return null;
-    }
-
-    return validateMember(request);
+    // 유효성 검사 후 해당하는 member 반환
+    return tokenProvider.getMemberFromAuthentication();
   }
 
   //cost의 생성 및 삭제에 의한 비용 변경시 total 갱신하는 메서드
