@@ -32,8 +32,7 @@ public class ExcelService {
   private final CostRepository costRepository;
 
 
-  @Transactional(readOnly = true)
-  public ResponseDto<?> downloadExcel(Long id, HttpServletRequest request, HttpServletResponse response) {
+  public void downloadExcel(Long id, HttpServletRequest request, HttpServletResponse response) throws IOException {
 //    if (null == request.getHeader("RefreshToken")) {
 //    return ResponseDto.fail("MEMBER_NOT_FOUND",
 //            "로그인이 필요합니다.");
@@ -48,18 +47,17 @@ public class ExcelService {
 //    if (null == member) {
 //      return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
 //    }
-    Trip trip = isPresentTrip(id);
-    if (null == trip) {
-      return ResponseDto.fail("NOT_FOUND", "존재하지 않는 게시글 id 입니다.");
-    }
 
+    Trip trip = isPresentTrip(id);
+    if(trip==null)
+      return;
     Workbook wb = new XSSFWorkbook();
     Sheet sheet = wb.createSheet("첫번째 시트");
     Row row = null;
     Cell cell = null;
     int rowNum = 0;
 
-    CellStyle body = ExcelWriter.createCellStyle(wb, new Color(255,255,255));
+    CellStyle body = ExcelWriter.createCellStyle(wb, new Color(255, 255, 255));
 
     List<Date> dateList = dateRepository.findAllByTrip(trip);
 
@@ -67,9 +65,9 @@ public class ExcelService {
 
       row = sheet.createRow(rowNum++);
       cell = row.createCell(0);
-      cell.setCellStyle(ExcelWriter.createCellStyle(wb,new Color(225,235,245)));
-      cell.setCellValue("day "+(i+1));
-      ExcelWriter.renderHeader(wb,row);
+      cell.setCellStyle(ExcelWriter.createCellStyle(wb, new Color(225, 235, 245)));
+      cell.setCellValue("day " + (i + 1));
+      ExcelWriter.renderHeader(wb, row);
 
 
       List<Cost> costList = costRepository.findAllByDate(dateList.get(i));
@@ -82,7 +80,7 @@ public class ExcelService {
       }
       row = sheet.createRow(rowNum++);
       cell = row.createCell(0);
-      cell.setCellValue("day"+(i+1)+" 지출");
+      cell.setCellValue("day" + (i + 1) + " 지출");
       cell = row.createCell(PAY.getColumn());
       cell.setCellValue(dateList.get(i).getSubTotal());
       row = sheet.createRow(rowNum++);
@@ -96,20 +94,13 @@ public class ExcelService {
 
     // 컨텐츠 타입과 파일명 지정
     response.setContentType("ms-vnd/excel");
-    response.setHeader("Content-Disposition", "attachment;filename=example.xlsx");
+    response.setHeader("Content-Disposition", "attachment;filename=trip.xlsx");
 
     // Excel File Output
-    try {
-      wb.write(response.getOutputStream());
-      wb.close();
-    } catch (IOException e) {
-      return ResponseDto.fail("DOWNLOAD_FAIL", "다운로드에 실패하였습니다.");
-    }
+    wb.write(response.getOutputStream());
+    wb.close();
 
-
-    return ResponseDto.success("download success");
   }
-
   @Transactional(readOnly = true)
   public Trip isPresentTrip(Long id) {
     Optional<Trip> optionalTrip = tripRepository.findById(id);
