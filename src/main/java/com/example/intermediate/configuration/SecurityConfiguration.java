@@ -55,6 +55,8 @@ public class SecurityConfiguration {
 
     http.csrf().disable()
 
+        .headers().frameOptions().disable()
+        .and()
         .exceptionHandling()
         .authenticationEntryPoint(authenticationEntryPointException)
         .accessDeniedHandler(accessDeniedHandlerException)
