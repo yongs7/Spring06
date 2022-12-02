@@ -23,7 +23,8 @@
 - 여행 일정 등록, 수정, 삭제
 - 일자별 지출 등록, 수정, 삭제
 - 지출 목록 엑셀 다운로드
-<img width="520" alt="image" src="https://user-images.githubusercontent.com/97495661/205209473-b1903c60-d964-42b5-8448-daa429e1f169.png">
+<img width="543" alt="image" src="https://user-images.githubusercontent.com/97495661/205210048-11ef7956-7796-4389-93cd-11735a1c8f2e.png">
+
 
 <br>
 
